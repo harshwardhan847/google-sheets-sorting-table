@@ -113,7 +113,7 @@ export const columns: ColumnDef<SheetData>[] = [
     },
   },
   {
-    accessorKey: "Score ↵(0-10)",
+    accessorKey: "Score \n(0-10)",
     header: ({ column }) => {
       return (
         <Button
