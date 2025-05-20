@@ -1,23 +1,28 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import type { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, Check, X } from "lucide-react";
+import { ArrowUpDown } from "lucide-react";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type SheetData = {
   Factor: string;
   "Slab / Range": string;
-  "Variable Score \n(0-10)": number;
+  "Lookup Key": string;
+  "Score ↵(0-10)": number;
   "Access ": string;
   "Data Source": string;
   "Data Source Type": string;
   "Source Trust Multiplier": number;
+  Categorisation: string;
+  Weightage: number;
   "Adjusted Score": number;
   "Data Flag": boolean;
   "Included Score": number;
-  "AGGREGATE SCORE (In %)": string;
+  "Helper Column"?: string;
+  "Aggregated Score"?: string;
 };
 
 export const columns: ColumnDef<SheetData>[] = [
@@ -50,14 +55,28 @@ export const columns: ColumnDef<SheetData>[] = [
     },
   },
   {
-    accessorKey: "Variable Score \n(0-10)",
+    accessorKey: "Lookup Key",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Variable Score (0-10)
+          Lookup key
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+  },
+  {
+    accessorKey: "Score ↵(0-10)",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Score (0-10)
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
@@ -120,6 +139,34 @@ export const columns: ColumnDef<SheetData>[] = [
     },
   },
   {
+    accessorKey: "Categorisation",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Categorisation
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+  },
+  {
+    accessorKey: "Weightage",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Weightage
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+  },
+  {
     accessorKey: "Adjusted Score",
     header: ({ column }) => {
       return (
@@ -153,11 +200,9 @@ export const columns: ColumnDef<SheetData>[] = [
     cell: ({ row }) => {
       return (
         <div>
-          {row.getValue("Data Flag") === true ? (
-            <Check className="text-green-600" />
-          ) : (
-            <X />
-          )}
+          <Checkbox
+            checked={row.getValue("Data Flag") === true ? true : false}
+          />
         </div>
       );
     },
@@ -181,14 +226,14 @@ export const columns: ColumnDef<SheetData>[] = [
     },
   },
   {
-    accessorKey: "AGGREGATE SCORE (In %)",
+    accessorKey: "Helper Column",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          AGGREGATE SCORE (In %)
+          Helper Column
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
