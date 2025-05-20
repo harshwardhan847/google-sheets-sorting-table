@@ -24,7 +24,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
@@ -33,24 +33,27 @@ import {
   DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+interface DataTableProps<SheetData, TValue> {
+  columns: ColumnDef<SheetData, TValue>[];
+  tableData: SheetData[];
+  setTableData: React.Dispatch<React.SetStateAction<SheetData[] | undefined>>;
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<SheetData, TValue>({
   columns,
-  data,
-}: DataTableProps<TData, TValue>) {
+  tableData,
+  setTableData,
+}: DataTableProps<SheetData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = useState({});
 
   const table = useReactTable({
-    data,
+    data: tableData,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -59,11 +62,22 @@ export function DataTable<TData, TValue>({
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
+
+    onRowSelectionChange: setRowSelection,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
+      rowSelection,
     },
+    meta: {
+      onDataFlagChange: (updatedData: SheetData[]) => setTableData(updatedData),
+    },
+    autoResetPageIndex: false,
+    //     autoResetFilters: false,
+    // autoResetSorting: false,
+    // autoResetExpanded: false,
+    // autoResetRowSelection: false,
   });
 
   useEffect(() => {
@@ -71,7 +85,7 @@ export function DataTable<TData, TValue>({
   }, [table]);
 
   return (
-    <div className="bg-background">
+    <div className="">
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter Factors..."
@@ -81,6 +95,17 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
+        <Button
+          variant="destructive"
+          className="ml-4"
+          onClick={() => {
+            setTableData((prev) =>
+              prev?.map((row) => ({ ...row, "Data Flag": false }))
+            );
+          }}
+        >
+          Reset All Data Flags
+        </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
@@ -108,7 +133,8 @@ export function DataTable<TData, TValue>({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="rounded-md border">
+
+      <div className="rounded-md border bg-background">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

@@ -21,11 +21,55 @@ export type SheetData = {
   "Adjusted Score": number;
   "Data Flag": boolean;
   "Included Score": number;
-  "Helper Column"?: string;
+  "Helper Column"?: number;
   "Aggregated Score"?: string;
 };
 
 export const columns: ColumnDef<SheetData>[] = [
+  {
+    accessorKey: "Data Flag",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Data Flag
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row, table }) => {
+      const factor = row.original.Factor;
+      const data = table.options.data as SheetData[];
+      const isSelected = row.original["Data Flag"];
+      const isOnlySelected =
+        data.filter((r) => r.Factor === factor && r["Data Flag"]).length <= 1;
+
+      const toggleSelection = () => {
+        // Reset all "Data Flag" values for the same Factor
+        const updatedData = data.map((item) =>
+          item.Factor === factor
+            ? { ...item, "Data Flag": item === row.original }
+            : item
+        );
+
+        // Notify parent (optional if managing state above)
+        //@ts-expect-error added my me
+        table.options.meta?.onDataFlagChange?.(updatedData);
+      };
+
+      return (
+        <Checkbox
+          checked={isSelected}
+          onCheckedChange={toggleSelection}
+          disabled={!isSelected && !isOnlySelected}
+          aria-label="Select one per Factor"
+        />
+      );
+    },
+    enablePinning: true,
+  },
   {
     accessorKey: "Factor",
     header: ({ column }) => {
@@ -184,29 +228,7 @@ export const columns: ColumnDef<SheetData>[] = [
       return <div>{row.getValue("Adjusted Score")?.toFixed(2)}</div>;
     },
   },
-  {
-    accessorKey: "Data Flag",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Data Flag
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      return (
-        <div>
-          <Checkbox
-            checked={row.getValue("Data Flag") === true ? true : false}
-          />
-        </div>
-      );
-    },
-  },
+
   {
     accessorKey: "Included Score",
     header: ({ column }) => {
@@ -225,18 +247,18 @@ export const columns: ColumnDef<SheetData>[] = [
       return <div>{row.getValue("Included Score")?.toFixed(2)}</div>;
     },
   },
-  {
-    accessorKey: "Helper Column",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Helper Column
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-  },
+  // {
+  //   accessorKey: "Helper Column",
+  //   header: ({ column }) => {
+  //     return (
+  //       <Button
+  //         variant="ghost"
+  //         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+  //       >
+  //         Helper Column
+  //         <ArrowUpDown className="ml-2 h-4 w-4" />
+  //       </Button>
+  //     );
+  //   },
+  // },
 ];

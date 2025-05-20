@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { columns, type SheetData } from "./columns";
 import { DataTable } from "./data-table";
+import Stats from "./Stats";
 
 export default function DemoPage() {
   const [loading, setIsLoading] = useState(true);
@@ -24,6 +25,8 @@ export default function DemoPage() {
       });
   }, []);
 
+  const selectedRows = data?.filter((val) => val["Data Flag"]);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center w-full h-full min-h-screen">
@@ -42,7 +45,8 @@ export default function DemoPage() {
 
   return (
     <div className="container mx-auto py-10">
-      <DataTable columns={columns} data={data} />
+      <Stats selectedRows={selectedRows} data={data} />
+      <DataTable columns={columns} tableData={data} setTableData={setData} />
     </div>
   );
 }
