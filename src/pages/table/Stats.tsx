@@ -5,6 +5,7 @@ import { TrendingDownIcon, TrendingUpIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
+  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -16,12 +17,13 @@ type Props = {
 };
 
 const Stats = ({ selectedRows, data }: Props) => {
-  const totalSelectedScore =
-    selectedRows
-      ?.map((val) => val["Adjusted Score"])
-      ?.reduce((previous, curr) => {
-        return previous + curr;
-      }) ?? 0;
+  const totalSelectedScore = selectedRows?.length
+    ? selectedRows
+        ?.map((val) => val["Adjusted Score"])
+        ?.reduce((previous, curr) => {
+          return previous + curr;
+        })
+    : 0;
 
   const totalHelper =
     data
@@ -37,6 +39,18 @@ const Stats = ({ selectedRows, data }: Props) => {
       }) ?? 0;
 
   const aggregatedScore = (totalSelectedScore / totalHelper) * 100;
+
+  if (!selectedRows?.length) {
+    return (
+      <div className="grid md:grid-cols-3">
+        <Card className="@container/card min-h-40 flex items-center justify-center">
+          <CardContent className="text-xl font-semibold">
+            Select some Factors
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
   return (
     <div className="*:data-[slot=card]:shadow-xs xl:grid-cols-3 5xl:grid-cols-4 grid grid-cols-1 gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card">
       {/* <Card className="@container/card">

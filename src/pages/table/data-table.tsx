@@ -97,6 +97,7 @@ export function DataTable<SheetData, TValue>({
         />
         <Button
           variant="destructive"
+          type="button"
           className="ml-4"
           onClick={() => {
             setTableData((prev) =>

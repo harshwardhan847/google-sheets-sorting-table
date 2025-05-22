@@ -50,7 +50,15 @@ export const columns: ColumnDef<SheetData>[] = [
         // Reset all "Data Flag" values for the same Factor
         const updatedData = data.map((item) =>
           item.Factor === factor
-            ? { ...item, "Data Flag": item === row.original }
+            ? {
+                ...item,
+                "Data Flag":
+                  item === row.original
+                    ? item["Data Flag"] === true
+                      ? false
+                      : true
+                    : false,
+              }
             : item
         );
 
@@ -63,6 +71,7 @@ export const columns: ColumnDef<SheetData>[] = [
         <Checkbox
           checked={isSelected}
           onCheckedChange={toggleSelection}
+          className="cursor-pointer"
           disabled={!isSelected && !isOnlySelected}
           aria-label="Select one per Factor"
         />
