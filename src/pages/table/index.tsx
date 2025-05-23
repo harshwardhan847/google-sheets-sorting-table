@@ -45,7 +45,9 @@ export default function DemoPage() {
 
   return (
     <div className="container mx-auto py-10">
-      <Stats selectedRows={selectedRows} data={data} />
+      <div className="w-full flex gap-4">
+        <Stats selectedRows={selectedRows} data={data} />
+      </div>
       <DataTable columns={columns} tableData={data} setTableData={setData} />
     </div>
   );

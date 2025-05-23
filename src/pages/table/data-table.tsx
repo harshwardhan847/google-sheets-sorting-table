@@ -93,7 +93,7 @@ export function DataTable<SheetData, TValue>({
           onChange={(event) =>
             table.getColumn("Factor")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm"
+          className="max-w-sm w-full bg-card"
         />
         <Button
           variant="destructive"
